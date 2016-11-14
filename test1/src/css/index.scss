@@ -1,0 +1,189 @@
+@mixin font-dpr($font-size){
+    font-size: $font-size;
+
+    [data-dpr="2"] & {
+        font-size: $font-size * 2;
+    }
+
+    [data-dpr="3"] & {
+        font-size: $font-size * 3;
+    }
+}
+@mixin mCenter ($width){
+    left: 50%;
+    margin-left:-$width/2;
+}
+.js-animate{
+    width:100%;
+    position: absolute;
+}
+.ok{color: green!important;}
+.warn{color: #f99!important;}
+
+.page1 .container{
+    height:100%;
+    width:85%;
+    margin:1rem auto 0;
+    .exp-logo{
+        display:block;
+        width:2.6rem;
+        height:1.733333rem;
+        @include mCenter(2.6rem);
+        background:url(../imgs/bd.png) no-repeat;
+        background-size: 100%;
+    }
+    .heart{
+        background:url(../imgs/heart.png) no-repeat;
+        background-size: 100% 100%;
+        width: 4.5rem;
+        height:4rem;
+        top:2.6rem;
+        @include mCenter(4.5rem);
+        animation-delay:1s;
+    }
+    .big-title{
+        background:url(../imgs/title-text.png) no-repeat;
+        width: 5.0rem;
+        height: 2.466667rem;
+        background-size: 100% 100%;
+        top:7rem;
+        @include mCenter(5rem);
+    }
+    .line-title{
+        top:10rem;
+        width:4rem;
+        @include mCenter(4rem);
+        span{
+            color:#a26978;
+            @include font-dpr(16px);
+            position:relative;
+            i{
+                position:absolute;
+                width:0.8rem;
+                height:1px;
+                background-color: #a26978;
+                top:0.26rem;
+                &.i-left{
+                    left:-0.8rem;                   
+                }
+                &.i-right{
+                   right:-0.8rem;                   
+                }
+            }
+        }
+    }
+    .next-page{
+        width:3.466667rem;
+        height: 0.533333rem;
+        line-height: 0.533333rem;
+        background-color: #fff;
+        text-align: center;
+        border: 1px solid green;
+        padding: 0.133333rem 0.013333rem;
+        font-size: 20px;
+        color:green;
+        top:12rem;
+        @include mCenter(3.466667rem);
+    }
+}
+.page2{
+    .c1{
+        top:2rem;
+    }
+    .c2{
+        top:4rem;
+    }
+    .c3{
+        top:6rem;
+    }
+    .c4{
+        top:8rem;
+    }
+    .c5{
+        top:10rem;
+        p{
+            text-align: left;
+            padding: 0.2rem;
+            margin: 0.2rem;
+        }
+    }
+    .c6{
+        top:12rem;
+    }
+    .c7{
+        top:14rem;
+    }
+}
+.page3{
+    .c7{
+        width: 85%;
+        @include mCenter(85%);
+        top:1.066667rem;
+        border-radius: 0.133333rem;
+        border: 2px solid red;
+        text-align: left;
+        margin-bottom: 1px;
+        .sub-form{
+            margin-top: 1.15rem
+        }
+        .item-form{         
+            margin: 0.15rem 0;
+            width: 100%;
+            font-size: 0;
+            label{
+                width: 30%;
+                display:inline-block;
+                vertical-align: middle;
+                text-align: right;
+                @include font-dpr(12px);
+            }
+            input{
+                display:inline-block;
+                vertical-align: middle;
+                box-sizing: border-box;
+                padding: 1px;
+                width: 55%;
+                height:0.6rem;
+                line-height: 0.6rem;
+                border-radius: 2px;
+                @include font-dpr(12px);
+                &.submitTo{
+                    background-color: #78f;
+                    color:#fff;
+                }
+                &#telephone ,&#code{
+                    width: 30%;
+                }
+                &#yan{
+                    width:25%;
+                    color: #fff;
+                    background-color: #78f;
+                    border:1px solid #2e6da4;
+                    @include font-dpr(10px); 
+                    &.yanColor{
+                        color: #f56;
+                        background-color: #c1c1c1;
+                        border:1px solid #c1c1c1;
+                    }
+                }           
+            }
+            .nameMsg{
+                margin-top:  0.15rem;
+                display:block;
+                margin-left: 24%;
+                color: red;
+                text-align: left;
+                @include font-dpr(12px);
+                height:0.6rem;
+                line-height: 0.6rem
+            }
+            #captcha_img{
+                display:inline-block;
+                vertical-align: middle;
+                width:24%;
+                height:0.6rem;
+                margin-left: 1%;
+            } 
+        }
+    }
+}
