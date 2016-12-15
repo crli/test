@@ -1,0 +1,46 @@
+html,body{
+    width: 100%;
+    height: 100%;
+}
+body{
+    font: 14px/1.5 Helvetica Neue,Helvetica,Arial,Microsoft Yahei,Hiragino Sans GB,Heiti SC,WenQuanYi Micro Hei,sans-serif !important;
+    color: #040404;
+
+}
+a{
+    text-decoration: none!important;
+}
+
+.clearfix:before,
+.clearfix:after {
+    content: " ";
+    display: table;
+}
+
+.clearfix:after {
+    clear: both;
+}
+@mixin font-dpr($font-size){
+    font-size: $font-size;
+
+    [data-dpr="2"] & {
+        font-size: $font-size * 2;
+    }
+
+    [data-dpr="3"] & {
+        font-size: $font-size * 3;
+    }
+}
+.item{
+    float: left;
+    width:2.5625rem;
+    height:1.625rem;
+    text-align: center;
+    line-height: 1.625rem;
+    margin: 1.3125rem;
+    background:red;
+    a{
+        color:#fff;
+        @include font-dpr(24px)
+    }
+}
