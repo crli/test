@@ -39,7 +39,7 @@ var PATHS = {
     /*
      * publish path
      * */
-    publicPath: devServer ? '/h5mobile/dist/' : './',
+    publicPath: devServer ? '/' : './',
 
 
     /*
@@ -58,7 +58,9 @@ var PATHS = {
     node_modulesPath: path.resolve('./node_modules'),
 }
 
-
+function resolvedir (dir) {
+  return path.join(__dirname, '.', dir)
+}
 var resolve = {
     extensions: ['', '.js', '.css', '.scss', '.png', '.jpg'],
 
@@ -73,6 +75,7 @@ var resolve = {
      * Replace modules with other modules or paths.
      * */
     alias: {
+        '@': resolvedir('src')
         /*
          * js
          */
@@ -91,7 +94,7 @@ var entry = {
     index: './src/js/index.js',
     about: './src/js/about.js',
     list: './src/js/list.js',
-    common: ['jquery']
+    vendor: ['jquery']
 };
 
 
@@ -116,7 +119,7 @@ var output = {
 
     /*
      * The filename of non-entry chunks as relative path inside the output.path directory.
-     * ï¼ˆæŒ‰éœ€åŠ è½½æ¨¡å—æ—¶è¾“å‡ºçš„æ–‡ä»¶åç§°ï¼‰
+     * £¨°´Ğè¼ÓÔØÄ£¿éÊ±Êä³öµÄÎÄ¼şÃû³Æ£©
      * */
     chunkFilename: devServer ? 'js/[name].js' : 'js/[name]-[chunkhash:8].js'
 }
@@ -125,43 +128,40 @@ var loaders = [
     
     {
         test: /\.js$/,
-        loader: 'babel'
+        loader: 'babel-loader',
+        include: [resolvedir('src')]
     },
-
-    {
-        test: /\.html$/,
-        loader: "html"
-    },
-
-    {
-        test: /\.(png|gif|jpe?g)$/,
-        loader: 'url-loader',
-        query: {
-            limit: 10000,
-            name: 'imgs/[name]-[hash:8].[ext]'
-        }
-    },
-
-    {
-       test   : /\.woff|\.woff2|\.svg|.eot|\.ttf/,
-       loader : 'url-loader?prefix=font/&limit=10000'
-    },
-
     {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader", {
-            publicPath: '../'
-        })
+        loader: ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader")
     },
 
     { 
         test: /\.scss$/, 
-        loader:ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader!sass-loader?outputStyle=expanded", {
-            publicPath: '../'
-        })
+        loader:ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader!sass-loader?outputStyle=expanded")
+    },
+    {
+        test: /\.html$/,
+        loader: "html-loader"
+    },
+
+    {
+        test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
+        loader: 'url-loader',
+        query: {
+            limit: 10000,
+            name: 'img/[name]-[hash:7].[ext]'
+        }
+    },
+
+    {
+       test   : /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+       loader : 'url-loader',
+       query: {
+           limit: 10000,
+           name: 'font/[name]-[hash:7].[ext]'
+       }
     }
-
-
 ];
 
 var plugins = [
@@ -169,12 +169,12 @@ var plugins = [
     new webpack.DefinePlugin({
         /*
          * dev flag
-         * ï¼ˆå¼€å‘æ ‡è¯†ï¼‰
+         * £¨¿ª·¢±êÊ¶£©
          * */
         __DEV__: debug,
         /*
          * proxy flag
-         * ï¼ˆä»£ç†çš„æ ‡è¯†ï¼‰
+         * £¨´úÀíµÄ±êÊ¶£©
          * */
         __DEVAPI__: devServer ? "/devApi/" : "''",
     }),
@@ -185,7 +185,7 @@ var plugins = [
         dry: false // Do not delete anything, good for testing.
     }),
     new webpack.optimize.CommonsChunkPlugin(
-        {name: "common", filename: "js/common.js"}
+        {name: "vendor", filename: "js/vendor.js"}
     ),
 
     new webpack.ProvidePlugin({
@@ -203,7 +203,7 @@ var plugins = [
 
     /*
      * Using this config the vendor chunk should not be changing its hash unless you change its code or dependencies
-     * ï¼ˆé¿å…åœ¨æ–‡ä»¶ä¸æ”¹å˜çš„æƒ…å†µä¸‹hashå€¼ä¸å˜åŒ–ï¼‰
+     * £¨±ÜÃâÔÚÎÄ¼ş²»¸Ä±äµÄÇé¿öÏÂhashÖµ²»±ä»¯£©
      * */
     new webpack.optimize.OccurenceOrderPlugin(),
 
@@ -215,26 +215,26 @@ var plugins = [
 var pages = Object.keys(getEntry('./src/*.html'));
 
 var confTitle = [ 
-    {name: 'index', title: 'è¿™æ˜¯é¦–é¡µæ ‡é¢˜'},
-    {name: 'list', title: 'è¿™æ˜¯åˆ—è¡¨æ ‡é¢˜'},
-    {name: 'about', title: 'è¿™æ˜¯å…³äºæˆ‘æ ‡é¢˜'}
+    {name: 'index', title: 'ÕâÊÇÊ×Ò³±êÌâ'},
+    {name: 'list', title: 'ÕâÊÇÁĞ±í±êÌâ'},
+    {name: 'about', title: 'ÕâÊÇ¹ØÓÚÎÒ±êÌâ'}
 ]
-//ç”ŸæˆHTMLæ¨¡æ¿
+//Éú³ÉHTMLÄ£°å
 pages.forEach(function(pathname) {
-    var itemName  = pathname.split('src\\') //æ ¹æ®ç³»ç»Ÿè·¯å¾„æ¥å–æ–‡ä»¶å,windowä¸‹çš„åšæ³•//,å…¶å®ƒç³»ç»Ÿå¦æµ‹
+    var itemName  = pathname.split('src\\') //¸ù¾İÏµÍ³Â·¾¶À´È¡ÎÄ¼şÃû,windowÏÂµÄ×ö·¨//,ÆäËüÏµÍ³Áí²â
 
     var conf = {
-        filename: itemName[1] + '.html', //ç”Ÿæˆçš„htmlå­˜æ”¾è·¯å¾„,ç›¸å¯¹äºpath
-        template: pathname + '.html', //htmlæ¨¡æ¿è·¯å¾„
-        inject: true, //å…è®¸æ’ä»¶ä¿®æ”¹å“ªäº›å†…å®¹,åŒ…æ‹¬headä¸body
-        hash: false, //æ˜¯å¦æ·»åŠ hashå€¼
-        minify: { //å‹ç¼©HTMLæ–‡ä»¶
-            removeComments: true,//ç§»é™¤HTMLä¸­çš„æ³¨é‡Š
-            collapseWhitespace: false //åˆ é™¤ç©ºç™½ç¬¦ä¸æ¢è¡Œç¬¦
+        filename: itemName[1] + '.html', //Éú³ÉµÄhtml´æ·ÅÂ·¾¶,Ïà¶ÔÓÚpath
+        template: pathname + '.html', //htmlÄ£°åÂ·¾¶
+        inject: true, //ÔÊĞí²å¼şĞŞ¸ÄÄÄĞ©ÄÚÈİ,°üÀ¨headÓëbody
+        hash: false, //ÊÇ·ñÌí¼ÓhashÖµ
+        minify: { //Ñ¹ËõHTMLÎÄ¼ş
+            removeComments: true,//ÒÆ³ıHTMLÖĞµÄ×¢ÊÍ
+            collapseWhitespace: false //É¾³ı¿Õ°×·ûÓë»»ĞĞ·û
         }
     };
 
-    conf.chunks = ['common', itemName[1]];
+    conf.chunks = ['vendor', itemName[1]];
 
     for (var i in confTitle) { 
         if (confTitle[i].name === itemName[1]) { 
@@ -243,7 +243,7 @@ pages.forEach(function(pathname) {
     }
     plugins.push(new HtmlWebpackPlugin(conf));
 });
-//æŒ‰æ–‡ä»¶åæ¥è·å–å…¥å£æ–‡ä»¶(å³éœ€è¦ç”Ÿæˆçš„æ¨¡æ¿æ–‡ä»¶æ•°é‡)
+//°´ÎÄ¼şÃûÀ´»ñÈ¡Èë¿ÚÎÄ¼ş(¼´ĞèÒªÉú³ÉµÄÄ£°åÎÄ¼şÊıÁ¿)
 function getEntry(globPath) {
     var files = glob.sync(globPath);
     var entries = {},
@@ -264,7 +264,7 @@ if (minimize) {
 
     plugins.push(
 
-        new webpack.optimize.UglifyJsPlugin({ // jsã€css
+        new webpack.optimize.UglifyJsPlugin({ // js¡¢css
             mangle: {
                 except: ['$super', '$', 'exports', 'require', 'module', '_']
             },
@@ -336,7 +336,7 @@ if (devServer) {
                 host: "0.0.0.0", // Defaults to `localhost`   process.env.HOST
                 port: "5000",  // Defaults to 8080   process.env.PORT
                 proxy: {
-                    '/devApi/': {
+                    __DEVAPI__: {
                         target: proxyTarget,
                         changeOrigin: true,
                         pathRewrite: {
@@ -351,9 +351,3 @@ if (devServer) {
 }
 
 module.exports = validate(config);
-
-
-
-
-
-
