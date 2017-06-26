@@ -1,95 +1,37 @@
 var path = require('path');
-var glob = require('glob');
 var webpack = require('webpack');
-var validate = require('webpack-validator');
 var CleanWebpackPlugin = require('clean-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
 var Merge = require('webpack-merge');
 var OpenBrowserPlugin = require('open-browser-webpack-plugin');
+var utils = require('./config/utils');
 
-/*
- *  Detect how npm is run and branch based on that
- * */
 var currentTarget = process.env.npm_lifecycle_event;
 
 var debug,          // is debug
     devServer,      // is hrm mode
     minimize;       // is minimize
 
-
 if (currentTarget == "build") { // online mode 
-
     debug = false, devServer = false, minimize = true;
-
 } else if (currentTarget == "dev") { // dev mode 
-
     debug = true, devServer = false, minimize = false;
-
 } else if (currentTarget == "start") { // dev HRM mode 
-
     debug = true, devServer = true, minimize = false;
 }
 
- /*
- * proxy target address
- * */
-var proxyTarget = 'http://localhost:8080/';   
+var resolvedir = function (dir) {
+  return path.join(__dirname, '.', dir)
+}
+
 var PATHS = {
-    /*
-     * publish path
-     * */
     publicPath: devServer ? '/' : './',
-
-
-    /*
-     * public resource path
-     * */
     libsPath: path.resolve(process.cwd(), './src/libs'),
-
-    /*
-     * resource path
-     * */
     srcPath: path.resolve(process.cwd(), './src'),
-
-    /*
-    * node_modules path
-    */
     node_modulesPath: path.resolve('./node_modules'),
 }
 
-function resolvedir (dir) {
-  return path.join(__dirname, '.', dir)
-}
-var resolve = {
-    extensions: ['', '.js', '.css', '.scss', '.png', '.jpg'],
-
-    /*
-     * The directory (absolute path) that contains your modules
-     * */
-    root: [
-        PATHS.node_modulesPath
-    ],
-
-    /*
-     * Replace modules with other modules or paths.
-     * */
-    alias: {
-        '@': resolvedir('src')
-        /*
-         * js
-         */
-        // jquery: path.join(PATHS.libsPath, "./js/jquery")
-        /*
-         * css
-         */
-
-    }
-}
-
-/*
- * The entry point for the bundle.
- * */
 var entry = {
     index: './src/js/index.js',
     about: './src/js/about.js',
@@ -97,128 +39,89 @@ var entry = {
     vendor: ['jquery']
 };
 
-
-/*
- * output options tell Webpack how to write the compiled files to disk
- * */
 var output = {
-    /*
-     *  determines the location on disk the files are written to
-     * */
     path: path.join(__dirname, 'dist'),
-
-    /*
-     * The publicPath specifies the public URL address of the output files when referenced in a browser
-     * */
-    publicPath: PATHS.publicPath,
-
-    /*
-     * Specifies the name of each output file on disk
-     * */
     filename: devServer ? 'js/[name].js' : 'js/[name]-[chunkhash:8].js',
-
-    /*
-     * The filename of non-entry chunks as relative path inside the output.path directory.
-     * （按需加载模块时输出的文件名称）
-     * */
+    publicPath: PATHS.publicPath,
     chunkFilename: devServer ? 'js/[name].js' : 'js/[name]-[chunkhash:8].js'
 }
 
-var loaders = [
-    
+
+
+var rules = [  
     {
         test: /\.js$/,
-        loader: 'babel-loader',
+        use: 'babel-loader',
         include: [resolvedir('src')]
     },
     {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader")
-    },
-
-    { 
-        test: /\.scss$/, 
-        loader:ExtractTextPlugin.extract("style-loader", "css-loader!postcss-loader!sass-loader?outputStyle=expanded")
-    },
-    {
         test: /\.html$/,
-        loader: "html-loader"
+        use: "html-loader"
     },
-
     {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-        loader: 'url-loader',
-        query: {
-            limit: 10000,
-            name: 'img/[name]-[hash:7].[ext]'
-        }
+        use:[
+            {
+                loader: 'url-loader',
+                query: {
+                    limit: 10000,
+                    name: 'img/[name]-[hash:7].[ext]'
+                }
+            }
+        ]     
     },
-
     {
-       test   : /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-       loader : 'url-loader',
-       query: {
-           limit: 10000,
-           name: 'font/[name]-[hash:7].[ext]'
-       }
+       test : /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+       use: [
+            {
+                loader: 'url-loader',
+                query: {
+                    limit: 10000,
+                    name: 'font/[name]-[hash:7].[ext]'
+                }
+            }    
+        ]   
     }
 ];
 
+
+var resolve = {
+    extensions: ['.js', '.css', '.scss', '.png', '.jpg'],
+    modules: [PATHS.node_modulesPath],
+    alias: {
+        '@': resolvedir('src')
+    }
+}
+
 var plugins = [
-
-    new webpack.DefinePlugin({
-        /*
-         * dev flag
-         * （开发标识）
-         * */
-        __DEV__: debug,
-        /*
-         * proxy flag
-         * （代理的标识）
-         * */
-        __DEVAPI__: devServer ? "/devApi/" : "''",
+    new webpack.DefinePlugin({       
+        __DEV__: debug,//（开发标识）        
+        __DEVAPI__: devServer ? "/api" : "https://www.uworldeal.com/",//（代理的标识）
     }),
-
     new CleanWebpackPlugin(['dist'], {
-        root: '', // An absolute path for the root  of webpack.config.js
-        verbose: true,// Write logs to console.
-        dry: false // Do not delete anything, good for testing.
+        root: __dirname, 
+        verbose: true,
+        dry: false
     }),
     new webpack.optimize.CommonsChunkPlugin(
         {name: "vendor", filename: "js/vendor.js"}
     ),
-
     new webpack.ProvidePlugin({
         $: "jquery",
         jQuery: "jquery",
         "window.jQuery": "jquery"
-        
-        // $: "webpack-zepto"
     }),
-
-    /*
-     * Search for equal or similar files and deduplicate them in the output
-     */
-    new webpack.optimize.DedupePlugin(),
-
-    /*
-     * Using this config the vendor chunk should not be changing its hash unless you change its code or dependencies
-     * （避免在文件不改变的情况下hash值不变化）
-     * */
-    new webpack.optimize.OccurenceOrderPlugin(),
-
-   
-
-    new ExtractTextPlugin(devServer ? "css/[name].css" : "css/[name]-[chunkhash:8].css",{allChunks: true})
+    new ExtractTextPlugin(devServer ? {filename: "css/[name].css"} : {filename:"css/[name]-[chunkhash:8].css", disable: false, allChunks: true})
 ];
 
-var pages = Object.keys(getEntry('./src/*.html'));
+var pages = Object.keys(utils.getEntry('./src/*.html'));
 
 var confTitle = [ 
     {name: 'index', title: '这是首页标题'},
     {name: 'list', title: '这是列表标题'},
     {name: 'about', title: '这是关于我标题'}
 ]
+
 //生成HTML模板
 pages.forEach(function(pathname) {
     var itemName  = pathname.split('src\\') //根据系统路径来取文件名,window下的做法//,其它系统另测
@@ -243,22 +146,6 @@ pages.forEach(function(pathname) {
     }
     plugins.push(new HtmlWebpackPlugin(conf));
 });
-//按文件名来获取入口文件(即需要生成的模板文件数量)
-function getEntry(globPath) {
-    var files = glob.sync(globPath);
-    var entries = {},
-        entry, dirname, basename, pathname, extname;
-    for (var i = 0; i < files.length; i++) {
-        entry = files[i];
-        dirname = path.dirname(entry);
-        extname = path.extname(entry);
-        basename = path.basename(entry, extname);
-        pathname = path.join(dirname, basename);
-        entries[pathname] = './' + entry;
-    }
-    return entries;
-}
-
 
 if (minimize) {
 
@@ -276,71 +163,54 @@ if (minimize) {
             }
         })
     )
-
 }
 
-
 var config = {
+    devtool: 'eval-source-map',
     entry: entry,
-    /*
-     *  Like resolve but for loaders(find the position of loader).
-     * */
-    resolveLoader: {root: path.join(__dirname, "node_modules")},
     output: output,
     module: {
-        loaders: loaders
+        loaders: rules
     },
     resolve: resolve,
     plugins: plugins,
-
 }
 
-
+var proxyTarget = 'http://192.168.1.100/'; //proxy target address 
 /*
  *  Hrm setting
  * */
 if (devServer) {
-
     config = Merge(
         config,
         {
             plugins: [
-                // Enable multi-pass compilation for enhanced performance
-                // in larger projects. Good default.
-                new webpack.HotModuleReplacementPlugin({
-                    multiStep: true
-                }),
-                new OpenBrowserPlugin({url: 'http://localhost:5000' + PATHS.publicPath })
+                new webpack.HotModuleReplacementPlugin({}),
+                new OpenBrowserPlugin({url: 'http://localhost:5000'})
             ],
+            module:{
+                loaders:[
+                    {
+                        test: /\.(css|scss)$/,
+                        loader:"style-loader!css-loader!postcss-loader!sass-loader"
+                    }
+                ]
+            },
             devServer: {
-                // Enable history API fallback so HTML5 History API based
-                // routing works. This is a good default that will come
-                // in handy in more complicated setups.
                 historyApiFallback: true,
-
-                // Unlike the cli flag, this doesn't set
-                // HotModuleReplacementPlugin!
                 hot: true,
                 inline: true,
-
-                // Display only errors to reduce the amount of output.
                 stats: 'errors-only',
-
-                // Parse host and port from env to allow customization.
-                //
-                // If you use Vagrant or Cloud9, set
-                // host: options.host || '0.0.0.0';
-                //
-                // 0.0.0.0 is available to all network devices
-                // unlike default `localhost`.
+                // contentBase: path.join(__dirname, "dist"),
+                // compress: true,
                 host: "0.0.0.0", // Defaults to `localhost`   process.env.HOST
-                port: "5000",  // Defaults to 8080   process.env.PORT
+                port: 5000,  // Defaults to 5000   process.env.PORT
                 proxy: {
                     __DEVAPI__: {
                         target: proxyTarget,
-                        changeOrigin: true,
+                        changeOrigin: false,
                         pathRewrite: {
-                          '^/devApi/': ''
+                          '^/api': ''
                         }
                     }
                 }
@@ -348,6 +218,39 @@ if (devServer) {
             }
         }
     );
+}else{
+    config = Merge(
+        config,
+        {
+            module:{
+                loaders:[
+                    {
+                        test: /\.css$/,
+                        use: ExtractTextPlugin.extract({
+                            fallback: "style-loader",
+                            use: [ 
+                                { loader: 'css-loader', options: { importLoaders: 2 ,minimize: true} },
+                                'postcss-loader'
+                            ]
+                        })
+                    },
+
+                    { 
+                        test: /\.scss$/, 
+                        use:ExtractTextPlugin.extract({
+                            fallback: "style-loader",
+                            use: [ 
+                                { loader: 'css-loader', options: { importLoaders: 2 ,minimize: true} },
+                                'postcss-loader',
+                                'sass-loader'
+                            ]
+
+                        })
+                    },
+                ]
+            }
+        }
+    );
 }
 
-module.exports = validate(config);
+module.exports = config;
