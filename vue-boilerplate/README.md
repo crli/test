@@ -1,4 +1,4 @@
-# music-vue
+# admin
 
 > A Vue.js project
 
