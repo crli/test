@@ -7,15 +7,19 @@
  */
 let baseUrl;
 let routerMode;
+let imgSrc;
 if (process.env.NODE_ENV == 'development') {
   baseUrl = 'api/';
   routerMode = 'hash';
+  imgSrc = 'img/';
 }else{
   baseUrl = '';
   routerMode = 'hash';
+  imgSrc = '';
 }
 
 export {
 	baseUrl,
-	routerMode
+	routerMode,
+  imgSrc
 }

@@ -1,11 +1,8 @@
+$ic: #fb8a71;
+$ict: #fdcc00;
+$bc: #e4e4e4;
+$fc:#fff;
 $fcolor:#fb8a71;
-
-//定位全屏
-@mixin allcover{
-	position:absolute;
-	top:0;
-	right:0;
-}
 
 //定位上下左右居中
 @mixin center {
@@ -35,6 +32,7 @@ $fcolor:#fb8a71;
 	height: $height;
 }
 
+}
 @mixin font-dpr($font-size){
     font-size: $font-size;
 
@@ -55,12 +53,4 @@ $fcolor:#fb8a71;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: $num;
 }
-@mixin wrap($num:200){
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  z-index: $num;
-  padding-top: 1.093333rem;
-}
+
