@@ -17,31 +17,40 @@
             <div class="div" :class="{visibel:v==false}"></div>
         </template>
    </div>
+   <div class="box">
+        <template v-for="(v,key, index) in change2">
+            <div class="div" :class="{visibel:v==false}"></div>
+        </template>
+   </div>
    </div> 
 <script>
-
 var arr = [];
-
 for(var i=0;i<9;i++){
     arr.push(false)
 }
 var arr1 = arr.slice()
+var arr2 = arr.slice()
 var vm = new Vue({
     el:'#demo',
     data:{
         change:arr,
-        change1:arr1
+        change1:arr1,
+        change2:arr2,
     },
     created(){
         var that = this;
+        
+        // 动画一
         var i = 0;
-        var intervalID = setInterval(function  () {
+        var interval1 = setInterval(function  () {
            that.change1.splice(i, 1,true) 
            i++;
            if(i>=9){
-            clearInterval(intervalID)
+            clearInterval(interval1)
            }
         }, 200)
+
+        // 动画二
         setTimeout(function  () {
            that.change.splice(0, 1,true) 
         },0)
@@ -57,9 +66,21 @@ var vm = new Vue({
         setTimeout(function  () {
            that.change.splice(8, 1,true) 
         }, 800)
+
+        // 动画三
+        var arrindex = [0,3,6,7,8,5,2,1,4];
+        var  j = 0;
+        var interval2 = setInterval(function () {
+          that.change2.splice(arrindex[j], 1,true) 
+          j++;
+          if(j>arrindex.length){
+            clearInterval(interval2)
+          }
+        },200)
+
+        
     }
 })
-
 </script>
 </body>
 <style type="text/css">
