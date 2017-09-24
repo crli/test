@@ -66,7 +66,10 @@ html,body{
 .hid{
   position: fixed;
 }
-
+.yhide{
+  position: fixed;
+    width: 100%;
+}
 .ellipsis{
   overflow: hidden;
   word-wrap: break-word;
@@ -133,12 +136,17 @@ a{
   right: 1.8rem;
 }
 .router-slid-enter-active, .router-slid-leave-active {
-  transition: all .3s;
+  transition: all .4s;
 }
 .router-slid-enter, .router-slid-leave-active {
   transform: translateX(100%);opacity: 0;
 }
-
+.slide-enter-active, .slide-leave-active {
+  transition: all .4s;
+}
+.slide-enter, .slide-leave-active {
+  transform: translateY(100%);opacity: 0;
+}
 input,input:focus,input:active{user-select: text;}
 
 

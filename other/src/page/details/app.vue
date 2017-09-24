@@ -14,7 +14,7 @@
         <b>￥<span>33</span></b>
       </div>
     </div>
-    <div class="select p10">
+    <div class="select p10" @click="showSelect">
       <div class="left">
         <span>已选：</span><span>选择颜色 型号 分类</span>
       </div>
@@ -109,14 +109,65 @@
           <span v-if="buynum">{{buynum}}</span>
         </div>
       </div>
-      <div class="otheradd" @click="addCart">加入购物车</div>
-      <div class="otherbuy" @click="rightCart">立即购买</div>
+      <div class="otheradd" @click="showSelect">加入购物车</div>
+      <div class="otherbuy" @click="showSelect">立即购买</div>
     </div>
+    <transition name="slide">
+      <div class="selectbox" v-show="showflag">
+        <div class="box">
+          <i class="iconfont icon-select" @click="hideSelect"></i>
+          <div class="top">
+            <img src="../../assets/img/1.jpg" height="1080" width="1920" alt="" />
+            <div class="cont">
+              <div class="money">￥333</div>
+              <div class="num">库存2222件</div>
+            </div>
+          </div>
+          <div class="swrap">
+            <div class="item">
+              <div class="title">mdwdwdw</div>
+              <div class="cont-box">
+                <span>213sssssssssss232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>213sssssssssss232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>213sssssssssss232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>213sssssssssss232</span>
+                <span>2112412</span>
+                <span>213232</span>
+                <span>2112412</span>
+                <span>213232</span>
+              </div>
+            </div>
+            <div class="numbox">
+              <div class="name">数量</div>
+              <div class="numselect">
+                <button>-</button><input type="text" v-model="num"/><button class="add">+</button>
+              </div>
+            </div>
+          </div>
+          <div class="button" @click="addCart">
+            <span>加入购物车</span>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script>
   import { swiper, swiperSlide } from 'vue-awesome-swiper'
+  // import { Toast } from 'mint-ui'
   import imga from '@assets/img/timg.jpg'
   export default {
     components: {
@@ -155,7 +206,11 @@
           }
         ],
         active: 0,
-        buynum: 0
+        buynum: 0,
+        showflag: false,
+        scroll: 0,
+        buyflag: true,
+        num: 1
       }
     },
     mounted () {
@@ -172,7 +227,18 @@
         console.log('去结账')
       },
       addCart () {
-        this.buynum ++
+        // if (this.buyflag) {
+        //   this.buyflag = false
+        //   Toast({
+        //     message: '添加购物车成功',
+        //     position: 'middle',
+        //     duration: 2000
+        //   })
+        //   this.buynum ++
+        //   setTimeout(() => {
+        //     this.buyflag = true
+        //   }, 2000)
+        // }
       },
       tocart () {
         console.log('去购物车')
@@ -182,6 +248,17 @@
       },
       tohome () {
         window.location.href = 'index.html'
+      },
+      showSelect () {
+        this.scroll = document.body.scrollTop + document.documentElement.scrollTop
+        document.body.setAttribute('class', 'yhide')
+        document.body.style.top = -this.scroll + 'px'
+        this.showflag = true
+      },
+      hideSelect () {
+        document.body.removeAttribute('class', 'yhide')
+        document.body.scrollTop = this.scroll
+        this.showflag = false
       }
     }
   }
@@ -429,5 +506,138 @@
   }
   .zhanwei{
     height:48px;
+  }
+  .selectbox{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+    top:0;
+    z-index: 3;
+    background:rgba(0,0,0,.3);
+    .box{
+      position:absolute;
+      bottom:0;
+      height:500px;
+      width:100%;
+      background:#fff;
+      .icon-select{
+        position:absolute;
+        right:5px;
+        top:5px;
+        font-size: 20px
+      }
+      .top{
+        padding:10px 0;
+        height:98px;
+        display:flex;
+        border-bottom: 1px solid #eee;
+        img{
+          @include wh(100px,100px)
+          margin:0 10px;
+          position:relative;
+          top:-32px;
+          border:2px solid #fff
+        }
+        .cont{
+          .money{
+            line-height: 18px;
+            font-size: 16px;
+            color: #DD2727;
+          }
+          .num{
+            font-size: 13px;
+            color: #333;
+          }
+        }
+      }
+      .swrap{
+        overflow:auto;
+        height:300px;
+        -webkit-overflow-scrolling: touch;
+      }
+      .item{
+        padding:0 10px;
+        margin-top: 20px;
+        .title{
+          font-size: 12px;
+          color:#666;
+          margin-bottom: 6px;
+        }
+        .cont-box{
+          display:flex;
+          flex-wrap:wrap;
+          span{
+            margin:0 7px 7px 0;
+            display:block;
+            border: 1px solid #e5e5e5;
+            padding: 6px 15px;
+            color:#333
+          }
+        }
+      }
+      .numbox{
+        display:flex;
+        justify-content:space-between;
+        padding:0 10px;
+        margin: 20px 0;
+        .name{
+          font-size: 13px;
+          line-height: 36px;
+          color:#333
+        }
+        .numselect{
+          width: 117px;
+          height: 36px;
+          button{
+            font-size: 22px;
+            line-height: 35px;
+            color: #666;
+            width: 37px;
+            height: 36px;
+            background-color: white;
+            border: 1px solid #999;
+            vertical-align: middle;
+            &:first-child{
+              border-radius: 3px 0 0 3px;
+            }
+            &.add{
+              border-radius: 0 3px 3px 0;
+            }
+          }
+          input{
+            font-size: 12px;
+            text-align: center;
+            vertical-align: middle;
+            color: #666;
+            border-radius: 0;
+            width: 41px;
+            height: 36px;
+            padding: 16px 1px;
+            border: 1px solid #999;
+            border-left: none;
+            border-right: none
+          }
+        }
+      }
+      .button{
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right:0;
+        border-top: 1px solid #e5e5e5;
+        text-align: center;
+        width: 100%;
+        z-index: 10;
+        span{
+          background-color: #ffac5a;
+          height: 50px;
+          line-height: 50px;
+          font-size: 18px;
+          color: #FFF;
+          display:block
+        }
+      }
+    }
   }
 </style>

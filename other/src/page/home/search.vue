@@ -37,7 +37,6 @@
 
 <script>
   import {getStore, setStore} from '@/config/mUtils'
-  let time = null
   export default {
     name: 'search',
     data () {
@@ -51,11 +50,9 @@
       }
     },
     created () {
-      this.y = document.body.scrollTop
-      clearTimeout(time)
-      time = setTimeout(() => {
-        document.body.setAttribute('class', 'hid')
-      }, 300)
+      this.y = document.body.scrollTop + document.documentElement.scrollTop
+      document.body.setAttribute('class', 'yhide')
+      document.body.style.top = -this.y + 'px'
     },
     mounted () {
       if (getStore('searchHistory')) {
@@ -68,8 +65,7 @@
       }
     },
     destroyed () {
-      clearTimeout(time)
-      document.body.removeAttribute('class', 'hid')
+      document.body.removeAttribute('class', 'yhide')
       document.body.scrollTop = this.y
     },
     methods: {
