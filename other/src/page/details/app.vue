@@ -166,7 +166,7 @@
         this.active = index
       },
       toComment () {
-        window.location.href = 'comment.html'
+        this.$router.push('comment')
       },
       rightCart () {
         console.log('去结账')
