@@ -1,8 +1,8 @@
 <template>
   <div id="">
-    <!-- <div class="div" @click="toAddress">单击去路由页面a2</div>
-    <tpl headfont></tpl> -->
-    <div class="topWindow">
+    <div class="div" @click="toAddress">单击去路由页面a2</div>
+    <tpl headfont></tpl>
+    <!-- <div class="topWindow">
       <div class="videobox" :class="{'full':isFull}" @click="showControls">
         <div class="loading" v-if="loading">
           <div class="box"><spinner type="fading-circle" color="#fff"></spinner></div>
@@ -26,7 +26,7 @@
           </div>
         </transition>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 

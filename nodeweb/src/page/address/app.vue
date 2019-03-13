@@ -12,7 +12,7 @@
 
 <script>
   import {mapState} from 'vuex'
-  import {homebanner} from '@server'
+  import {infoList} from '@server'
   import tpl from '@components/tpl'
   export default {
     name: 'app',
@@ -25,7 +25,7 @@
       tpl
     },
     async mounted () {
-      let response = await homebanner(1)
+      let response = await infoList(1)
       if (response.data.Error === 0) {
         this.banner = response.data.data
       }
