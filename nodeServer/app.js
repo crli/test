@@ -14,9 +14,9 @@ app.all('*', function (req, res, next) {
   if(arr.indexOf(str) > -1) {
     res.header("Access-Control-Allow-Origin", str); 
     res.header("Access-Control-Allow-Credentials", true);
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With"); //请求方法同步异步
     res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS");
-    res.header("X-Powered-By", ' 3.2.1');
+    res.header("X-Powered-By", ' 3.2.1'); //是express还是其他
     res.header("Content-Type", "application/json;charset=utf-8");
   }
   next();

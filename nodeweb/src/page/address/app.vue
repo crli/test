@@ -24,11 +24,10 @@
     components: {
       tpl
     },
-    async mounted () {
-      let response = await infoList(1)
-      if (response.data.Error === 0) {
-        this.banner = response.data.data
-      }
+    mounted () {
+      infoList(1).then((res) => {
+
+      })
     },
     computed: {
       ...mapState([
